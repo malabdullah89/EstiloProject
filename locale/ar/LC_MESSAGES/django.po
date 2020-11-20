@@ -1,0 +1,399 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-27 17:07+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: accounts/managers.py:16
+msgid "The Email must be set"
+msgstr "يجب ادخال البريد الالكتروني"
+
+#: accounts/managers.py:35
+msgid "Superuser must have is_superuser=True."
+msgstr ""
+
+#: accounts/models.py:11
+msgid "Driver"
+msgstr "سائق"
+
+#: accounts/models.py:12
+msgid "Seller"
+msgstr "المتجر"
+
+#: accounts/models.py:13
+msgid "Customer"
+msgstr "العميل"
+
+#: accounts/models.py:18
+msgid "Phone"
+msgstr "هاتف"
+
+#: accounts/models.py:21
+msgid "first name"
+msgstr "الاسم الاول"
+
+#: accounts/models.py:22
+msgid "last name"
+msgstr "الاسم الاخير"
+
+#: accounts/views.py:52 configuration/views.py:21 configuration/views.py:36
+#: driver/views.py:17 seller/views.py:27
+msgid "please enter a valid phone number starts with 965"
+msgstr "من فضلك ادخل رقم تليفون صحيح يبدأ ب 965"
+
+#: accounts/views.py:55 driver/views.py:20 seller/views.py:30
+msgid "please accept our tems of use"
+msgstr "من فضلك "
+
+#: accounts/views.py:65 driver/views.py:39 seller/views.py:49
+msgid "successfully sign up"
+msgstr "تم التسجيل بنجاح"
+
+#: accounts/views.py:80
+msgid "please enter your mail or phone number to login"
+msgstr "من فضلك ادخل البريد الالكتروني أو رقم الهاتف للدخول"
+
+#: accounts/views.py:83
+msgid "Please enter the correct email/phone number and a correct password"
+msgstr "من فضلك ادخل بريد الكتروني/الهاتف وكلمه المرور الصحيحين"
+
+#: accounts/views.py:108
+msgid "There is NO user with this usertype"
+msgstr "لا يوجد مستخدم بالنوع الموجود"
+
+#: accounts/views.py:131
+msgid "Wrong password."
+msgstr "كلمه مرور خاطئه"
+
+#: accounts/views.py:136
+msgid "Your password has been Updated Successfully."
+msgstr "تم تحديث كلمه المرور بنجاح"
+
+#: accounts/views.py:153
+msgid "reset code sent successfully."
+msgstr "تم ارسال كود التفعيل"
+
+#: accounts/views.py:156 accounts/views.py:172
+msgid "No User with this Email."
+msgstr "لا يوجد مستخدم بالبريد الالكتروني الموجود"
+
+#: accounts/views.py:157
+msgid "Please Enter a valid Email."
+msgstr "من فضلك ادخل بريد إلكتروني صحيح"
+
+#: accounts/views.py:169
+msgid "Your are logged in again"
+msgstr "تم ادخالك مره اخري"
+
+#: accounts/views.py:170
+msgid "Wrong Code"
+msgstr "كود خاطئ"
+
+#: accounts/views.py:174
+msgid "Please Enter Your Email."
+msgstr "من فضلك ادخل بريدك الإلكتروني"
+
+#: accounts/views.py:184
+msgid "password reseted successfuly"
+msgstr "تم تحديث كلمه السر بنجاح"
+
+#: accounts/views.py:201
+msgid "Your Location Added Successfully"
+msgstr "تم ادخال موقعك بنجاح"
+
+#: accounts/views.py:211 driver/views.py:54 product/views.py:54
+#: seller/views.py:119
+msgid "Updated Successfully"
+msgstr "تم التحديث بنجاح"
+
+#: accounts/views.py:218 accounts/views.py:234 cart/views.py:98
+#: cart/views.py:117
+msgid "Deleted Successfully"
+msgstr "تم المسح"
+
+#: accounts/views.py:219
+msgid "You Are Not Able to Delete THis Location"
+msgstr "أنت غير مسموح لك بمسح العنوان الموجود"
+
+#: accounts/views.py:235
+msgid "Sorry, No locations to Delete."
+msgstr "آسف,لا يوجد عناوين لتمسحها"
+
+#: cart/models.py:7
+msgid "checkout"
+msgstr "إتمام الطلب"
+
+#: cart/models.py:8
+msgid "not_checkout"
+msgstr "طلب غير متمم"
+
+#: cart/views.py:27
+msgid "Sorry You cannot add items to cart"
+msgstr "آسف, غير مسموح لك بإضافه منتجات فالعربه"
+
+#: cart/views.py:35
+msgid "Sorry, This product is out of the stock"
+msgstr "آسف, المنتج المطلوب غير موجود بالمخزن"
+
+#: cart/views.py:37
+#, fuzzy, python-brace-format
+#| msgid "Sorry, the available quantity in the stock is"
+msgid "Sorry, the available quantity in the stock is {product.quantity}"
+msgstr "آسف, الكميه المطلوبه أكبر من الكميه الموجوده فالمخزن يرجي تقليل الكميه"
+
+#: cart/views.py:46
+msgid "sorry you cannot add to cart from greater than 3 stores"
+msgstr "آسف, لا يمكنك إضافه منتجات فالعربه من أكثر من 3 متاجر"
+
+#: cart/views.py:68
+msgid "No cart"
+msgstr "لا يوجد عربه لديك"
+
+#: cart/views.py:91
+msgid "your cart is empty."
+msgstr "عربتك فارغه"
+
+#: cart/views.py:106
+#, fuzzy, python-brace-format
+#| msgid "Sorry the only quantity in stock is"
+msgid "Sorry the only quantity in stock is {cart_item.product.quantity}"
+msgstr "آسف, الكميه المطلوبه أكبر من الكميه الموجوده فالمخزن يرجي تقليل الكميه"
+
+#: cart/views.py:109
+msgid "Quantity is updated Successfully"
+msgstr "تم تحديث الكميه بنجاح"
+
+#: configuration/models.py:7
+msgid "New"
+msgstr "جديد"
+
+#: configuration/models.py:8
+msgid "Viewed"
+msgstr "شوهدت"
+
+#: configuration/views.py:25
+msgid "Thank you for contacting us."
+msgstr "شكرا علي مراسلتك"
+
+#: configuration/views.py:40
+msgid "We will reply you as soon as possible."
+msgstr "سوف نقوم بالرد عليك في أقرب وقت ممكن"
+
+#: driver/views.py:28 seller/views.py:38
+msgid "location is required"
+msgstr " يجب ادخال العنوان "
+
+#: driver/views.py:37 seller/views.py:47
+msgid "successfully sign up But your Location is not setted right"
+msgstr "تم التسجيل بنجاح ولكن لم يتم تحديد موقعك"
+
+#: market_place/settings.py:151
+msgid "Arabic"
+msgstr "عربي"
+
+#: market_place/settings.py:152
+msgid "English"
+msgstr "إنجليزي"
+
+#: notification/models.py:6
+msgid "Welcome"
+msgstr "أهلا وسهلا"
+
+#: notification/models.py:7
+msgid "Forget_Password"
+msgstr "نسيان كلمه السر"
+
+#: notification/models.py:8
+msgid "Driver_Order"
+msgstr "سائق الطلب"
+
+#: notification/models.py:9
+msgid "Cancel_Order"
+msgstr "إلغاء الطلب"
+
+#: notification/models.py:10
+msgid "Change_Order_Status"
+msgstr "تغيير حاله الطلب"
+
+#: order/models.py:8
+msgid "Added"
+msgstr "أضيف"
+
+#: order/models.py:9
+msgid "Accepted"
+msgstr "قبول"
+
+#: order/models.py:10
+msgid "Processing"
+msgstr "يصنع"
+
+#: order/models.py:11
+msgid "OUT_FOR_DELIVERY"
+msgstr "خرج للتوصيل"
+
+#: order/models.py:12
+msgid "Delivered"
+msgstr "وصل"
+
+#: order/models.py:13
+msgid "Cancel"
+msgstr "ألغي"
+
+#: order/models.py:14
+msgid "UnCompleted"
+msgstr "غير مكتمل"
+
+#: order/models.py:18
+msgid "K_NET"
+msgstr "بطاقه ائتمان كويتيه"
+
+#: order/models.py:19
+msgid "Credit_Card"
+msgstr "بطاقه ائتمان"
+
+#: order/models.py:20
+msgid "Cash"
+msgstr "نقدي"
+
+#: order/models.py:24
+msgid "Paid"
+msgstr "مدفوع"
+
+#: order/models.py:25
+msgid "Not_Paid"
+msgstr "غير مدفوع"
+
+#: order/serializers.py:12 seller/serializers.py:23
+msgid "You must choose your payment methods"
+msgstr "يجب اختيار طريقه الدفع"
+
+#: order/views.py:37
+msgid "You must enter location to calculate delivery fee"
+msgstr "يجب ادخال عنوان"
+
+#: product/models.py:7
+msgid "Men"
+msgstr "رجال"
+
+#: product/models.py:8
+msgid "Women"
+msgstr "نساء"
+
+#: product/models.py:9
+msgid "Kids"
+msgstr "أطفال"
+
+#: product/models.py:10
+msgid "unisex"
+msgstr "موحد النوع"
+
+#: product/models.py:14
+msgid "ready"
+msgstr "جاهز"
+
+#: product/models.py:15
+msgid "not_ready"
+msgstr "غير جاهز"
+
+#: product/models.py:26
+msgid "White"
+msgstr "أبيض"
+
+#: product/models.py:27
+msgid "Red"
+msgstr "أحمر"
+
+#: product/models.py:28
+msgid "Green"
+msgstr "أخضر"
+
+#: product/models.py:29
+msgid "Black"
+msgstr "اسود"
+
+#: product/models.py:30
+msgid "Purble"
+msgstr "بنفسجى"
+
+#: product/models.py:31
+msgid "Blue"
+msgstr "أزرق"
+
+#: product/models.py:32
+msgid "Yellow"
+msgstr "أصفر"
+
+#: product/models.py:33
+msgid "Pink"
+msgstr "بمبي"
+
+#: product/models.py:34
+msgid "Grey"
+msgstr "رمادي"
+
+#: product/models.py:35
+msgid "Gold"
+msgstr "دهبي"
+
+#: product/views.py:25
+msgid "Sorry You haven't the access to add product"
+msgstr "آسف, ليس بإمكانك إضافه منتج"
+
+#: product/views.py:63
+msgid "No products"
+msgstr "لا يوجد منتجات"
+
+#: product/views.py:66
+msgid "your product has been deleted successfully"
+msgstr "تم مسح المنتج بنجاح"
+
+#: product/views.py:73
+msgid "Sorry You cannot add product to favourite"
+msgstr "آسف, لا يمكنك إضافه منتج إلي المفضلين"
+
+#: product/views.py:79
+msgid "Added to favourite list successfully."
+msgstr "تم إضافه المنتج إلي المفضلين"
+
+#: product/views.py:81 product/views.py:96
+msgid "No products."
+msgstr "لا يوجد منتجات"
+
+#: product/views.py:88
+msgid "Sorry You cannot remove product from favourite"
+msgstr "آسف, لا يمكنك مسح المنتج من الفضلين"
+
+#: product/views.py:94
+msgid "Removed from favourite successfully."
+msgstr "تم الازاله من المفضلين بنجاح"
+
+#: product/views.py:103
+msgid "Sorry You haven't favourite product list"
+msgstr "آسف, ليس لديك قائمه المفضلين"
+
+#: seller/models.py:12
+msgid "cover"
+msgstr "صوره الكوفر"
+
+#: seller/views.py:79
+msgid "You don't have any locations yet"
+msgstr "ليس لديك عناوين الآن"
+
+#: seller/views.py:113
+msgid "NO Seller to update"
+msgstr "المتجر غير موجود"

@@ -1,0 +1,223 @@
+
+import date
+
+from dateutil.relativedelta import relativedelta
+from rest_framework import generics, permissions, request, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from accounts.serializers import *
+from accounts.views import  queryset_paginator
+from django.contrib.auth.hashers import make_password
+from django.contrib.gis.geos import GEOSGeometry
+from django.http import Http404
+from django.shortcuts import render
+from django.utils.translation import ugettext_lazy as _
+from order.models import Order
+from order.serializers import OrderSerializer
+from product.models import Product
+from product.serializers import SellerProductsSerializer
+
+from .serializers import *
+
+
+def get_distance(lat1, lon1, lat2, lon2):
+
+    pnt = GEOSGeometry(f'SRID=4326;POINT({lat1} -{lon1})')
+    pnt2 = GEOSGeometry(f'SRID=4326;POINT( {lat2} {lon2}  )')
+    return pnt.distance(pnt2) * 100
+
+
+
+class SellerrSignup(APIView):
+    permission_classes = (permissions.AllowAny,)
+    def post(self, request):
+        terms_of_use = request.data.get('terms_of_use')
+        if terms_of_use == "False":
+            return Response({"error": _("please accept our tems of use")},
+                            status=status.HTTP_400_BAD_REQUEST)
+        request.data.update({"user_type":"seller"})
+        seller_serializer = SellerSerializer(data=request.data)
+        if seller_serializer.is_valid():
+            location = request.data.get('locations')
+            if not location:
+                return Response({"error": _("location is required")}, status=status.HTTP_400_BAD_REQUEST)
+            seller = seller_serializer.save()
+            seller.set_password(request.data.get("password"))
+            seller.save()
+            location['user'] = seller.pk
+            serializer = LocationsSerializer(data=location)
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                return Response({"detail":_("successfully sign up But your Location is not setted right")}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": _("successfully sign up"),}, status=status.HTTP_201_CREATED)
+        return Response({"error": seller_serializer.errors,}, status=status.HTTP_400_BAD_REQUEST)
+
+class SellerList(APIView):
+    permission_classes = (permissions.AllowAny,)
+    def get(self, request):
+        qs = (request.GET).dict()
+        location = None
+        if "location" in qs:
+            location = qs["location"]
+            del qs["location"]
+        if "page" in qs:
+            del qs["page"]
+        filter_list = ['first_name__startswith', 'products__sub_category__name']
+        for key in qs:
+            if not (key in filter_list):
+                del key
+        sellers = Seller.objects.filter(**qs).distinct()
+        lat1 = None
+        if location:
+            try:
+                lat1, lon1 = location.split(',')
+            except:
+                return Response({"error": "please enter a valid location format"}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if request.user.pk:
+                try:
+                    user_location = UserLocation.objects.get(
+                        user=request.user, is_default=True)
+                except:
+                    return Response({"error": _("You don't have any locations yet")},
+                                    status=status.HTTP_400_BAD_REQUEST)
+                lat1, lon1 = user_location.lat, user_location.lon
+        seller_list = []
+        if lat1:
+            try:
+                configuration = Configuration.get_solo()
+                radius = configuration.radius
+            except:
+                radius = 2000000
+            for seller in sellers:
+                try:
+                   seller_location = seller.locations.get(is_default=True)
+                   lat, lon = (seller_location.lat, seller_location.lon)
+                   distance = get_distance(lat1, lon1, lat, lon)
+                   if distance == -1 or ((distance is not None) and (distance <= radius)):
+                        seller.calculated_distance = distance
+                        seller_list.append(seller)
+                except:
+                    pass    
+        else:
+            seller_list = sellers
+        page = request.GET.get("page", 1)
+        queryset, number = queryset_paginator(seller_list, page)
+
+        serializer = SellerSerializer(
+            queryset, many=True, context={"user": request.user})
+        return Response({"list": serializer.data, "pages_num": number})
+
+class UpdateSellerPofile(generics.RetrieveUpdateAPIView):
+    def update(self, request):
+        try:
+            seller=Seller.objects.get(pk=request.user.id)
+        except Seller.DoesNotExist:
+            return Response({"error": _("NO Seller to update")}, status=status.HTTP_400_BAD_REQUEST)
+        update_serializer = UpdateSellerProfileSerializer(
+            seller, data=request.data, partial=True)
+        if update_serializer.is_valid():
+            update_serializer.save()
+            json_response = dict(update_serializer.data)
+            return Response({"detail":_("Updated Successfully")}, status=status.HTTP_200_OK)
+        return Response({"error": update_serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SellerProducts(APIView):
+    def get(self, request):
+        products = Product.objects.filter(seller=request.user)
+        page = request.GET.get("page", 1)
+        queryset, number = queryset_paginator(products, page)
+        serializer = SellerProductsSerializer(queryset, many=True, context={"request": request})
+        return Response({"list": serializer.data, "pages_num": number})
+
+
+class SellerPendingOrders(APIView):
+    def get(self, request):
+        pending_orders = Seller.objects.get(pk=request.user.id).seller_orders.filter(driver__isnull=True)
+        page = request.GET.get("page", 1)
+        queryset, number = queryset_paginator(pending_orders, page)
+        serializer = SellerOrdersSerializer(queryset, many=True)
+        return Response({"list": serializer.data, "pages_num": number})
+        
+
+class SellerDeliveredOrders(APIView):
+    def get(self, request):
+        orders = Seller.objects.get(pk=request.user.id).seller_orders.filter(order_status='delivered')
+        page = request.GET.get("page", 1)
+        queryset, number = queryset_paginator(orders, page)
+        serializer = SellerOrdersSerializer(queryset, many=True)
+        return Response({"list": serializer.data, "pages_num": number})
+
+class SellerStatistics(APIView):
+    def get(self, request):
+        json_response = dict()
+        revenue = 0.0
+        monthly_revenue = 0.0
+        male_percentage=0
+        female_percentage=0
+        pending_orders = Seller.objects.get(pk=request.user.id).seller_orders.filter(driver=None, date=date.today()).count()
+        delivered_orders = Seller.objects.get(pk=request.user.id).seller_orders.filter(order_status='delivered', date=date.today())
+        for order in delivered_orders:
+            revenue = revenue +order.sub_total
+        json_response['Today'] = {"pending_orders": pending_orders}
+        json_response['Today'].update( {"delivered_orders": delivered_orders.count()})
+        json_response['Today'].update({"revenue": revenue})
+        
+        # Monthly calculations
+        monthly_pending_orders = Seller.objects.get(pk=request.user.id).seller_orders.filter(driver=None, date__range=[date.today() - relativedelta(months=1), date.today()]).count()
+        monthly_delivered_orders = Seller.objects.get(pk=request.user.id).seller_orders.filter(order_status='delivered', date__range=[date.today() - relativedelta(months=1), date.today()])
+        for order in monthly_delivered_orders:
+            monthly_revenue = monthly_revenue+order.sub_total
+        json_response['Month'] = {"pending_orders": monthly_pending_orders}
+        json_response['Month'].update({"delivered_orders": monthly_delivered_orders.count()})        
+        json_response['Month'].update({"revenue": monthly_revenue})        
+
+        # Client Demography
+        all_orders=Seller.objects.get(pk=request.user.id).seller_orders.all()
+        male_orders = Seller.objects.get(pk=request.user.id).seller_orders.filter(order_owner__gender='male').count()
+        female_orders = Seller.objects.get(pk=request.user.id).seller_orders.filter(order_owner__gender='female').count()
+        if all_orders.count() !=0:
+            male_percentage = male_orders / all_orders.count() * 100
+            female_percentage = female_orders / all_orders.count() * 100
+        json_response['client_demography']={'male_percentage':male_percentage}
+        json_response['client_demography'].update({'female_percentage':female_percentage})
+
+        # for order in all_orders:
+        #     print(order.cart)
+        
+        return Response(json_response,status=status.HTTP_200_OK)
+
+
+class StaffView(APIView):
+    def post(self, request):
+        request.data['seller']=request.user
+        serializer = StaffSerializer(data=request.data)
+        if serializer.is_valid():
+            staff = serializer.save()
+            password= make_password(request.data.get('password'))
+            staff.password = password
+            staff.save()
+            return Response({"detail": _("Added Successfully")})
+        return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request, pk):
+        try:
+            staff = Staff.objects.get(pk=pk)
+            serializer = StaffSerializer(staff,data=request.data,partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"detail": _("Updated Successfully")})
+            return Response({"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Http404
+    
+    def delete(self, request, pk):
+        try:
+            staff = Staff.objects.get(pk=pk, seller=request.user)
+            staff.delete()
+            return Response({"detail": _("Deleted Successfully")})
+        except:
+            return Http40
